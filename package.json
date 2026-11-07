@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node bot.js",
     "login": "node bot.js --login-only",
-    "dry-run": "node bot.js --dry-run"
+    "dry-run": "node bot.js --dry-run",
+    "check-group": "node check-group.js"
   },
   "dependencies": {
     "playwright": "^1.50.0"

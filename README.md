@@ -18,6 +18,7 @@ Dilengkapi dengan sistem **Anti-Ban** (jeda acak, istirahat berkala, rotasi temp
 - [Cara Menjalankan](#-cara-menjalankan)
   - [Opsi A: Menggunakan Command `node`](#opsi-a-menggunakan-command-node)
   - [Opsi B: Menggunakan Shortcut `npm`](#opsi-b-menggunakan-shortcut-npm)
+- [🔍 Pengecekan Anggota Grup & Follow-Up (H+2 / H+3)](#-pengecekan-anggota-grup--follow-up-h2--h3)
 - [Mekanisme Anti-Ban & Keamanan Akun](#-mekanisme-anti-ban--keamanan-akun)
 - [Pencatatan Riwayat (`history.json`)](#-pencatatan-riwayat-historyjson)
 - [Troubleshooting / Tanya Jawab](#-troubleshooting--tanya-jawab)
@@ -36,6 +37,7 @@ Dilengkapi dengan sistem **Anti-Ban** (jeda acak, istirahat berkala, rotasi temp
   - Jeda acak antar pesan (default 15–30 detik).
   - Jeda sebelum menekan tombol kirim (1.5–2.5 detik).
   - Istirahat berkala (*Batch Break*) setiap pengiriman N pesan (default istirahat 60–120 detik tiap 10 pesan).
+- 🔍 **Group Member Checker (Strictly by Phone Number)**: Memindai anggota grup WhatsApp undangan secara otomatis dan membandingkannya berdasarkan nomor telepon dengan `contact.json` untuk mengetahui siapa yang belum bergabung.
 - 🛡️ **Error Handling & Validasi**:
   - Melewati kontak yang nomor teleponnya kosong tanpa membuat script crash.
   - Menutup otomatis modal WhatsApp jika nomor tidak terdaftar.
@@ -52,7 +54,9 @@ wa-inviatation-bot/
 ├── greeting-messages.json  # Variasi template pesan undangan
 ├── config.example.js       # Template konfigurasi contoh
 ├── config.js               # Pengaturan link, durasi delay, dll. (diabaikan git)
-├── bot.js                  # Script automasi Playwright utama
+├── bot.js                  # Script automasi pengiriman pesan utama
+├── check-group.js          # Script pengecekan anggota grup & pembanding nomor
+├── pending-followup.json   # (Otomatis dibuat) Daftar kontak yang belum join grup
 ├── package.json            # Konfigurasi dependensi dan script npm
 ├── history.json            # (Otomatis dibuat) Catatan status pengiriman kontak
 └── wa_session/             # (Otomatis dibuat) Penyimpanan sesi login WhatsApp Web
@@ -177,6 +181,35 @@ Kamu bebas menggunakan perintah **`node`** langsung atau menggunakan shortcut **
 | **Simulasi pesan** | `npm run dry-run` | `node bot.js --dry-run` |
 | **Scan QR / Login saja** | `npm run login` | `node bot.js --login-only` |
 | **Mulai kirim pesan** | `npm start` | `node bot.js` |
+| **Cek anggota grup & komparasi** | `npm run check-group` | `node check-group.js` |
+
+---
+
+## 🔍 Pengecekan Anggota Grup & Follow-Up (H+2 / H+3)
+
+Fitur ini digunakan beberapa hari setelah undangan disebar untuk mengetahui **siapa saja yang belum bergabung ke dalam grup**, sehingga kamu bisa melakukan pengiriman ulang (*follow-up*) secara tertarget tanpa mengganggu yang sudah join.
+
+### 1. Cara Menjalankan Pengecekan
+Jalankan:
+```bash
+node check-group.js
+# atau
+npm run check-group
+```
+
+**Alur Kerja:**
+1. Browser akan membuka WhatsApp Web dengan sesi kamu.
+2. Bot akan membuka obrolan grup (berdasarkan `groupName` di `config.js` atau kamu klik manual).
+3. Bot membuka panel info grup dan memindai semua nomor anggota grup.
+4. Bot membandingkan nomor anggota dengan `contact.json` **secara ketat berdasarkan nomor telepon** (format dinormalisasi ke `62xxx`).
+5. Hasil kontak yang **belum masuk grup** otomatis disimpan ke file **`pending-followup.json`**.
+
+### 2. Cara Mengirim Pesan Follow-Up
+Setelah mendapatkan file `pending-followup.json`, kamu bisa langsung mengarahkan bot untuk mengirim pesan hanya ke mereka:
+```bash
+node bot.js --contacts pending-followup.json
+```
+*(Opsional: sesuaikan kalimat di `greeting-messages.json` dengan pesan pengingat follow-up sebelum mengirim).*
 
 ---
 

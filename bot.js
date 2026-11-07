@@ -22,7 +22,14 @@ if (fs.existsSync(CONFIG_FILE)) {
   process.exit(1);
 }
 
-const CONTACTS_FILE = path.join(__dirname, "contact.json");
+// Cek apakah ada argumen custom contacts file (misal: node bot.js --contacts pending-followup.json)
+const contactsArgIndex = process.argv.indexOf("--contacts");
+const contactsFileName =
+  contactsArgIndex !== -1 && process.argv[contactsArgIndex + 1]
+    ? process.argv[contactsArgIndex + 1]
+    : "contact.json";
+
+const CONTACTS_FILE = path.join(__dirname, contactsFileName);
 const MESSAGES_FILE = path.join(__dirname, "greeting-messages.json");
 const HISTORY_FILE = path.join(__dirname, "history.json");
 

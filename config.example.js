@@ -2,6 +2,9 @@ export const config = {
   // Masukkan link grup undangan resmi di sini
   invitationLink: "https://chat.whatsapp.com/YOUR_GROUP_INVITE_LINK",
 
+  // Nama grup WhatsApp (opsional, untuk pencarian otomatis saat pengecekan anggota)
+  groupName: "",
+
   // Pengaturan jeda waktu acak (dalam detik) antar pengiriman pesan
   delay: {
     minSeconds: 15,
