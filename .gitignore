@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Sesi WhatsApp & Riwayat (Data Pribadi / Sensitif)
+wa_session/
+history.json
+
+# Kontak Asli (Gunakan contact.example.json sebagai template)
+contact.json
+
+# Konfigurasi Asli (Gunakan config.example.js sebagai template)
+config.js
+
+# System & Log files
+.DS_Store
+*.log
